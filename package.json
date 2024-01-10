@@ -1,6 +1,6 @@
 {
-  "name": "template-web-app",
-  "description": "Base project for creating web applications using react+mui+redux toolkit+i18next.",
+  "name": "web-app",
+  "description": "Dashboard for viewing collection data for the state of Paraíba",
   "version": "1.0.0",
   "private": true,
   "license": "MIT",
