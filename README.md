@@ -14,6 +14,7 @@
 - Auth using JWT;
 - Responsive layout;
 - Internationalization with i18n.
+- Redux Tolkit
 
 ## Prerequisites
 
