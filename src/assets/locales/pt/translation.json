@@ -1,0 +1,63 @@
+{
+  "APP": {
+    "TITLE": "Título da Aplicação",
+    "UPDATE_AVAILABLE": "Uma nova versão do aplicativo está disponível!"
+  },
+  "AUTH": {
+    "LOGIN": {
+      "HELMET": "Login",
+      "LOGIN": "Nome de Usuário",
+      "PASSWORD": "Senha",
+      "ENTER": "Entrar",
+      "VALIDATORS": {
+        "LOGIN": "Nome de Usuário é obrigatório!",
+        "PASSWORD": "Senha é obrigatória!",
+        "INVALID_LOGIN": "Login com formato inválido!"
+      }
+    }
+  },
+  "APP_BAR": {
+    "PROFILE": "Meu perfil",
+    "EXIT": "Sair"
+  },
+  "BUTTON": {
+    "HOME_PAGE": "Página Inicial"
+  },
+  "DRAWER": {
+    "HOME": "Página Inicial",
+    "MENU1": "Menu 1",
+    "MENU2": "Menu 2"
+  },
+  "ESCAPE_PAGE": {
+    "NOT_FOUND": {
+      "HELMET": "Não encontrado",
+      "TITLE": "Não encontrado!",
+      "DESCRIPTION": "Recurso solicitado encontra-se indisponível ou foi definitivamente removido."
+    },
+    "ACCESS_DENIED": {
+      "HELMET": "Acesso negado",
+      "TITLE": "Acesso Negado!",
+      "DESCRIPTION": "O usuário possui permissão insuficiente para acessar o recurso solicitado."
+    },
+    "INTERNAL_ERROR": {
+      "HELMET": "Erro interno",
+      "TITLE": "Erro Interno!",
+      "DESCRIPTION": "Desculpe, a página que você está procurando está temporariamente indisponível."
+    }
+  },
+  "LAYOUT": {
+    "HELMET": "Layout"
+  },
+  "HOME": {
+    "HELMET": "Página Inicial"
+  },
+  "MENU1": {
+    "HELMET": "Menu 1"
+  },
+  "MENU2": {
+    "HELMET": "Menu 2"
+  },
+  "THEME_BUTTON": {
+    "CHANGE_THEME": "Alterar tema claro/escuro"
+  }
+}
