@@ -146,7 +146,7 @@ class AppBarComponent extends Component<IProps, IState> {
                 )
             }
             sx={{
-                background: theme.palette.primary.main,
+                background: `linear-gradient(180deg, #FCDB00 0%, #FCDB00 33.33%, #DE4046 33.33%, #DE4046 66.66%, #007320 66.66%, #007320 100%)`,
                 color: theme.palette.background.paper
             }}>
 

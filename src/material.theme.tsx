@@ -16,7 +16,7 @@ export const parseStringToThemeMode = (theme: string): ThemeMode => {
 const DEFAULT_THEME: any = {
     spacing: 10,
     palette: {
-        primary: { main: '#1976D2' }
+        primary: { main: '#007320' }
     },
     typography: {
         fontFamily: 'Roboto',

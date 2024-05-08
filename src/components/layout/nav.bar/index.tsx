@@ -20,8 +20,7 @@ import { createStyles, makeStyles, WithStyles, withStyles } from '@mui/styles'
 import { Dashboard, Home, Menu } from '@mui/icons-material'
 import { ThemeMode } from '../../../material.theme'
 
-import LogoLight from '../../../assets/imgs/logo_light.png'
-import LogoDark from '../../../assets/imgs/logo_dark.png'
+import Logo from '../../../assets/imgs/logo.png'
 
 import { IComponentRouter, withRouter } from '../../with.router'
 import clsx from 'clsx'
@@ -48,7 +47,8 @@ export const DRAWER_WIDTH = 220
 
 const NavBarStyle = (theme: Theme) => createStyles({
     root: {
-        backgroundColor: theme.palette.background.paper
+        backgroundColor: theme.palette.background.paper,
+        borderRight: '1px dotted #1e4a75'
     },
     drawer: {
         [theme.breakpoints.up('lg')]: {
@@ -58,12 +58,13 @@ const NavBarStyle = (theme: Theme) => createStyles({
         transition: '.2s all'
     },
     drawerLogo: {
+        marginTop: 5,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         width: 220,
-        height: 65,
-        padding: theme.spacing(2)
+        height: 145,
+        marginLeft: theme.spacing(5)
     },
     drawerPaper: {
         width: DRAWER_WIDTH,
@@ -149,7 +150,6 @@ class NavBar extends Component<IProps> {
             classes,
             desktopOpen,
             closeMobileView,
-            themeMode,
             location: { pathname },
             navigate
         } = this.props
@@ -162,14 +162,19 @@ class NavBar extends Component<IProps> {
                             <Box className={classes.drawerLogo}>
                                 <Link id="link_to_home_page" to="/" onClick={closeMobileView}>
                                     <img
-                                        src={themeMode === ThemeMode.LIGHT ? LogoLight : LogoDark}
+                                        style={{
+                                            width: '80%'
+                                    }}
+                                        src={Logo}
                                         alt="Logo"/>
                                 </Link>
                             </Box>
                         </Tooltip>
                     </Grid>
                 </Box>
-                <List id="list_nav_bar_menu" className={classes.list}>
+                <List id="list_nav_bar_menu" style={{
+                    marginTop: '1vw'
+                }} className={classes.list}>
 
                     <ListItemButton
                         id="list_item_home"
