@@ -1,4 +1,5 @@
-# Web-App - SEFAZ Collection
+![Brasão Rio Grande do Sul](src/assets/imgs/logo.png)
+
 
 <div align="center">
 
@@ -15,6 +16,8 @@
 - Responsive layout;
 - Internationalization with i18n.
 - Redux Tolkit
+- API Google Maps
+- Create points for help and SOS
 
 ## Prerequisites
 
@@ -27,7 +30,7 @@
 ## Cloning the Project
 
 ```
-https://github.com/SEFAZ-Arrecadacao/web-app.git
+https://github.com/lucasfstmd/sos-rs.git
 ```
 
 ## Set the environment variables
@@ -36,16 +39,18 @@ Application settings are defined by environment variables. To define the setting
 file, naming for `.env`. After that, open and edit the settings as needed. The following environments variables are
 available:
 
-| VARIABLE                  | DESCRIPTION                                                        | DEFAULT                  |
-|---------------------------|--------------------------------------------------------------------|--------------------------|
-| `REACT_APP_LS_SECRET_KEY` | Encryption key used to encrypt data stored in localStorage.        | `s3cr3tk3y`              |
+| VARIABLE                  | DESCRIPTION                                                                           | DEFAULT                  |
+|---------------------------|---------------------------------------------------------------------------------------|--------------------------|
+| `REACT_APP_LS_SECRET_KEY` | Encryption key used to encrypt data stored in localStorage.                           | `s3cr3tk3y`              |
 | `PORT`               | Port used by the application to listen to HTTP requests in a development environment. | `3000`                     |
-| `REACT_APP_ISSUER` | Issuer used to generate the JWT token.        | `issuer`              |
-| `REACT_APP_JWT_PUBLIC_KEY` | Public key for validating the jwt token.        | `-----BEGIN RSA PUBLIC KEY----------END RSA PUBLIC KEY-----`              |
-| `REACT_APP_TITLE` | Application title.        | `Template Web-app`              |
-| `REACT_APP_DESCRIPTION` | Application description.        | `Projeto base para criação de aplicações web usando react+mui+redux toolkit+i18next.`              |
-| `SSL_KEY_PATH` | Private key for SSL certificate.        | `.certs/server_key.pem`              |
-| `SSL_CERT_PATH` | Certificate for SSL certificate.        | `.certs/server_cert.pem`              |
+| `REACT_APP_ISSUER` | Issuer used to generate the JWT token.                                                | `issuer`              |
+| `REACT_APP_JWT_PUBLIC_KEY` | Public key for validating the jwt token.                                              | `-----BEGIN RSA PUBLIC KEY----------END RSA PUBLIC KEY-----`              |
+| `REACT_APP_TITLE` | Application title.                                                                    | `Template Web-app`              |
+| `REACT_APP_DESCRIPTION` | Application description.                                                              | `Projeto base para criação de aplicações web usando react+mui+redux toolkit+i18next.`              |
+| `REACT_APP_API_GATEWAY` | Geteway or BackEnd url.                                                               | `Projeto base para criação de aplicações web usando react+mui+redux toolkit+i18next.`              |
+| `REACT_APP_GOOGLE_MAPS_API_KEY` | Your Key for Google Maps API.                                                         | `Projeto base para criação de aplicações web usando react+mui+redux toolkit+i18next.`              |
+| `SSL_KEY_PATH` | Private key for SSL certificate.                                                      | `.certs/server_key.pem`              |
+| `SSL_CERT_PATH` | Certificate for SSL certificate.                                                      | `.certs/server_cert.pem`              |
 
 ## Available Scripts
 
