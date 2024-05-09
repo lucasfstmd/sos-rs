@@ -4,7 +4,8 @@ import { Sos } from '../../application/domain/models/entity/sos'
 export enum SosTypes {
     SOS_REQUEST = '@sos/sosRequest',
     SOS_CREATE = '@sos/sosCreateRequest',
-    SOS_ONE = '@sos/sosOneRequest'
+    SOS_ONE = '@sos/sosOneRequest',
+    SOS_DELETE = '@sos/sosDeleteRequest'
 }
 
 interface ISosRequest {
@@ -26,4 +27,5 @@ export interface ISosState {
     request: ISosRequest
     create: ISosCreate
     getOne: ISosCreate
+    delete: ISosCreate
 }

@@ -15,6 +15,10 @@ const initialState: ISosState = {
     getOne: {
         data: new Sos(),
         status: AsyncStateStatus.INITIAL
+    },
+    delete: {
+        data: new Sos(),
+        status: AsyncStateStatus.INITIAL
     }
 }
 
@@ -41,7 +45,7 @@ export const sosSlice = createSlice({
         },
         sosCreateFailure: (state: Draft<ISosState>) => {
             state.create.status = AsyncStateStatus.FAILURE
-        }     ,
+        },
         sosOneRequest: (state: Draft<ISosState>) => {
             state.getOne.status = AsyncStateStatus.LOADING
         },
@@ -50,7 +54,17 @@ export const sosSlice = createSlice({
             state.getOne.data = action.payload.data
         },
         sosOneFailure: (state: Draft<ISosState>) => {
-            state.getOne.status = AsyncStateStatus.FAILURE
+            state.delete.status = AsyncStateStatus.FAILURE
+        },
+        sosDeleteRequest: (state: Draft<ISosState>) => {
+            state.delete.status = AsyncStateStatus.LOADING
+        },
+        sosDeleteSuccess: (state: Draft<ISosState>, action: PayloadAction<{ data: any} >) => {
+            state.delete.status = AsyncStateStatus.SUCCESS
+            state.delete.data = action.payload.data
+        },
+        sosDeleteFailure: (state: Draft<ISosState>) => {
+            state.delete.status = AsyncStateStatus.FAILURE
         }
     }
 })

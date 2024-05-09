@@ -39,19 +39,30 @@ interface IProps extends WithTranslation {
     sosCreateRequest(props: ISosAction): void
 
     sosOneRequest(props: ISosAction): void
+
+    sosDeleteRequest(props: ISosAction): void
+}
+
+interface IState {
+    readonly pointers: Array<Sos>
 }
 
 type IJoinProps = IProps & WithStyles<typeof LayoutStyle>
 
 
-class HomeComponent extends Component<IJoinProps> {
+class HomeComponent extends Component<IJoinProps, IState> {
 
     // eslint-disable-next-line @typescript-eslint/no-useless-constructor
     constructor(props: IJoinProps) {
         super(props)
 
+        this.state = {
+            pointers: []
+        }
+
         this.onCreate = this.onCreate.bind(this)
         this.onGetOne = this.onGetOne.bind(this)
+        this.onDelete = this.onDelete.bind(this)
     }
 
     /**
@@ -80,6 +91,7 @@ class HomeComponent extends Component<IJoinProps> {
                 poiters={dataRequest}
                 onCreate={this.onCreate}
                 onGetOne={this.onGetOne}
+                onDelete={this.onDelete}
                 dataOne={dataOne}
                 statusOne={statusOne}
             />
@@ -92,6 +104,10 @@ class HomeComponent extends Component<IJoinProps> {
 
     private onGetOne(id: number) {
         this.props.sosOneRequest({ id: id })
+    }
+
+    private onDelete(id: number) {
+        this.props.sosDeleteRequest({ id: id })
     }
 
 }

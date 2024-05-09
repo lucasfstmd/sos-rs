@@ -6,11 +6,12 @@ import sosService from '../../services/sos'
 import { Sos } from '../../application/domain/models/entity/sos'
 
 export function* postSos(action: PayloadAction<ISosAction>) {
-    const { sosCreateSuccess, sosCreateFailure } = SosActions
+    const { sosCreateSuccess, sosCreateFailure, sosRequest } = SosActions
     try {
         const { payload } = action.payload
         const sos: any = yield apply(sosService, sosService.createSos, [payload as Sos])
         yield put(sosCreateSuccess({ data: sos }))
+        yield put(sosRequest())
     } catch (err) {
         yield put(sosCreateFailure())
     }
@@ -37,11 +38,23 @@ export function* getOne(action: PayloadAction<ISosAction>) {
     }
 }
 
+export function* deleted(action: PayloadAction<ISosAction>) {
+    const { sosDeleteSuccess, sosCreateFailure, sosRequest } = SosActions
+    try {
+        const { id } = action.payload
+        const sos: any = yield apply(sosService, sosService.delete, [id as number])
+        yield put(sosDeleteSuccess({ data: sos }))
+        yield put(sosRequest())
+    } catch (err) {
+        yield put(sosCreateFailure)
+    }
+}
 const sosSaga = function* () {
     yield all([
         takeLatest(SosTypes.SOS_CREATE, postSos),
         takeLatest(SosTypes.SOS_REQUEST, getSos),
-        takeLatest(SosTypes.SOS_ONE, getOne)
+        takeLatest(SosTypes.SOS_ONE, getOne),
+        takeLatest(SosTypes.SOS_DELETE, deleted)
     ])
 }
 

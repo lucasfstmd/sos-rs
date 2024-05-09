@@ -20,6 +20,11 @@ export class SosService {
         return axiosInstance.get(`${this.apiVersion}/sos/${id}`)
             .then((response: AxiosResponse) => new Sos().fromJSON(response.data))
     }
+
+    public async delete(id: number): Promise<Sos> {
+        return axiosInstance.delete(`${this.apiVersion}/sos/${id}`)
+            .then((response: AxiosResponse) => new Sos().fromJSON(response.data))
+    }
 }
 
 const sosService = new SosService()
