@@ -7,10 +7,9 @@ import {
     Table, TableBody,
     TableCell,
     TableContainer,
-    TableHead,
+    TableHead, TablePagination,
     TableRow,
-    Theme,
-    Typography
+    Theme
 } from '@mui/material'
 import { withTranslation, WithTranslation } from 'react-i18next'
 import { createStyles, withStyles, WithStyles } from '@mui/styles'
@@ -19,7 +18,7 @@ import { withRouter } from '../../components/with.router'
 import { ApplicationState, AsyncStateStatus } from '../../store/root.types'
 import { connect } from 'react-redux'
 import { SosActions } from '../../store/sos'
-import { ContentCopy } from '@mui/icons-material'
+import { Link } from 'react-router-dom'
 
 const Style = (theme: Theme) => createStyles({
     ...ANIMATION,
@@ -34,9 +33,24 @@ interface IProps {
 
 type IJoinProps = IProps & WithStyles<typeof Style> & WithTranslation
 
-class Menu1Component extends Component<IJoinProps> {
+interface IState {
+    readonly page: number
+    readonly rowsPerPage: number
+}
+
+class ListComponent extends Component<IJoinProps, IState> {
+
+    // eslint-disable-next-line
     constructor(props: IJoinProps) {
         super(props)
+
+        this.state = {
+            page: 0,
+            rowsPerPage: 5
+        }
+
+        this.handleChangePage = this.handleChangePage.bind(this)
+        this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this)
     }
 
     /**
@@ -60,6 +74,16 @@ class Menu1Component extends Component<IJoinProps> {
             classes,
             dataRequest
         } = this.props
+
+        const {
+            page,
+            rowsPerPage,
+        } = this.state
+
+        const startIndex = page * rowsPerPage
+        const endIndex = startIndex + rowsPerPage
+        const currentData = dataRequest.slice(startIndex, endIndex)
+
         return <React.Fragment>
 
             <Paper className={classes.fadeIn2}>
@@ -95,7 +119,7 @@ class Menu1Component extends Component<IJoinProps> {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {dataRequest.map((row) => (
+                                    {currentData.map((row) => (
                                         <TableRow
                                             key={row.name}
                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -140,30 +164,58 @@ class Menu1Component extends Component<IJoinProps> {
                                                 </Box>
                                             </TableCell>
                                             <TableCell align="center">
-                                                Ir para localização
+                                                <Link to={`/app/map?marker=${row.id}`}>
+                                                    Ir para localização
+                                                </Link>
                                             </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
                             </Table>
+                            <Box>
+                                <Divider/>
+                                <TablePagination
+                                    component="div"
+                                    count={dataRequest.length}
+                                    page={page}
+                                    onPageChange={this.handleChangePage}
+                                    rowsPerPage={rowsPerPage}
+                                    onRowsPerPageChange={this.handleChangeRowsPerPage}
+                                    rowsPerPageOptions={[5, 10, 25, 50, 100]}
+                                />
+                            </Box>
                         </TableContainer>
                     </Box>
                 </Box>
             </Paper>
-
         </React.Fragment>
+    }
 
+    private handleChangePage(
+        event: React.MouseEvent<HTMLButtonElement> | null,
+        newPage: number,
+    ) {
+        this.setState({ page: newPage })
+    }
+
+    private handleChangeRowsPerPage(
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) {
+        this.setState({
+            rowsPerPage: parseInt(event.target.value, 10),
+            page: 0
+        })
     }
 }
 
-const MenuComponent: any = withTranslation()(Menu1Component)
+const ListWithTranslation: any = withTranslation()(ListComponent)
 
 
-const MenuWithTransaltion = withTranslation()(MenuComponent)
+const ListWithTransaltion = withTranslation()(ListWithTranslation)
 
-const MenuWithStyles = withStyles<any>(Style)(MenuWithTransaltion)
+const ListWithStyles = withStyles<any>(Style)(ListWithTransaltion)
 
-const Menu = withRouter((MenuWithStyles))
+const List = withRouter((ListWithStyles))
 
 const mapStateToProps = (state: ApplicationState) => ({
     themeMode: state.layout.themeMode,
@@ -171,4 +223,4 @@ const mapStateToProps = (state: ApplicationState) => ({
     dataRequest: state.sos.request.data,
 })
 
-export default withRouter(connect(mapStateToProps, SosActions)(Menu))
+export default withRouter(connect(mapStateToProps, SosActions)(List))

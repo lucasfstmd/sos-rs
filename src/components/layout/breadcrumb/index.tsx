@@ -40,8 +40,8 @@ class BreadCrumb extends Component<IJoinProps> {
     private static getBreadCrumbName(listId: string[] | undefined): any {
         return {
             '/app': 'DRAWER.HOME',
-            '/app/menu1': 'DRAWER.MENU1',
-            '/app/menu2': 'DRAWER.MENU2'
+            '/app/map': 'DRAWER.HOME',
+            '/app/list': 'DRAWER.MENU1',
         }
     }
 

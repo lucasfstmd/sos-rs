@@ -4,6 +4,10 @@ FROM node:16-alpine
 RUN mkdir -p /usr/src/web-app
 WORKDIR /usr/src/web-app
 
+# Expose Ports
+EXPOSE 80
+EXPOSE 443
+
 # Copy app source
 COPY . /usr/src/web-app
 

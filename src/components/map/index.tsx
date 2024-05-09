@@ -25,11 +25,15 @@ import {
     FormGroup,
     FormControlLabel,
     Checkbox,
-    Skeleton
+    Skeleton,
+    RadioGroup,
+    FormLabel,
+    Radio
 } from '@mui/material'
 import { TransitionProps } from '@mui/material/transitions'
 import { ContentCopy, Close, Save, AddCircle, Delete } from '@mui/icons-material'
 import { AsyncStateStatus } from '../../store/root.types'
+import { useNavigate } from 'react-router-dom'
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
@@ -58,11 +62,10 @@ interface IUnidade {
 }
 
 const MapPage = (props) => {
-    // eslint-disable-next-line no-undef
+    // eslint-disable-next-line
     const [map, setMap] = React.useState<google.maps.Map>()
     const [openDialogPointer, setOpenDialogPointer] = React.useState(false)
     const [openDialogMap, setOpenDialogMap] = React.useState(false)
-    const [openDialogEditar, setOpenDialogEditar] = React.useState(false)
     const [openSnackBar, setOpenSnackBar] = React.useState(false)
     const [newUnidade, setNewUnidade] = React.useState<IUnidade>({
         id: 0,
@@ -86,47 +89,49 @@ const MapPage = (props) => {
     const [novaSobb, setNovaSobb] = React.useState<string>('')
     const [newCtt, setNewCtt] = React.useState<any>([])
     const [novaCtt, setNovaCtt] = React.useState<string>('')
-    const [unid, setUnid] = React.useState<IUnidade>({
-            id: 0,
-            urgencia: '',
-            unidade: '',
-            necessidades: [],
-            sobressalentes: [],
-            pessoas: {
-                quantidade: 0,
-                grupos: []
-            },
-            contatos: [],
-            localizacao: {
-                lat: 0,
-                lng: 0
-            }
-        })
+    const [tipoLocalizacao, setTipoLocalizacao] = React.useState<string>('click')
+    const [localizacaoClick, setLocalizacaoClick] = React.useState<{ lat: number | undefined, lng: number | undefined }>({
+        lat: 0,
+        lng: 0
+    })
+    const [localizacaoDevice, setLocalizacaoDevice] = React.useState<{ lat: number, lng: number }>({
+        lat: 0,
+        lng: 0
+    })
 
     const position = {
         lat: -29.207932557235694,
         lng: -53.24161023768301,
     };
+    const navigate = useNavigate()
     // eslint-disable-next-line no-undef
     const onMapLoad = (map: google.maps.Map) => {
         setMap(map);
     };
+
     // eslint-disable-next-line no-undef
-    const onClickPointer = (e: google.maps.MapMouseEvent, unidId: number) => {
+    const onClickPointer = (e: google.maps.MapMouseEvent, unidId: string) => {
+        navigate(`?marker=${unidId}`)
         props.onGetOne(unidId)
         setOpenDialogPointer(true)
-    };
+    }
+
+    React.useEffect(() => {
+        const query = new URLSearchParams(window.location.search)
+        const markerId = query.get('marker')
+        if (markerId) {
+            props.onGetOne(markerId)
+            setOpenDialogPointer(true)
+        }
+    }, [])
 
 
     // eslint-disable-next-line no-undef
     const onClickMap = (e: google.maps.MapMouseEvent) => {
         setOpenDialogMap(true)
-        setNewUnidade({
-            ...newUnidade,
-            localizacao: {
-                lat: e.latLng?.lat(),
-                lng: e.latLng?.lng()
-            }
+        setLocalizacaoClick({
+            lat: e.latLng?.lat(),
+            lng: e.latLng?.lng()
         })
     };
 
@@ -208,19 +213,53 @@ const MapPage = (props) => {
     }
 
     const handleSaveNewPointer = () => {
-        props.onCreate(newUnidade)
+        let loc: { lat: number | undefined; lng: number | undefined } = {
+            lat: 0,
+            lng: 0
+        }
+        if (tipoLocalizacao === 'click') loc = localizacaoClick
+        if (tipoLocalizacao === 'atual') loc = localizacaoDevice
+        props.onCreate({
+            ...newUnidade,
+            localizacao: loc
+        })
         setOpenDialogMap(false)
-    }
-
-    const handleEditarPointer = () => {
-        props.onEditar(newUnidade)
-        setOpenDialogMap(false)
+        setNewUnidade({
+            id: 0,
+            urgencia: '',
+            unidade: '',
+            necessidades: [],
+            sobressalentes: [],
+            pessoas: {
+                quantidade: 0,
+                grupos: []
+            },
+            contatos: [],
+            localizacao: {
+                lat: 0,
+                lng: 0
+            }
+        })
+        setNewCtt([])
+        setNewNecc([])
+        setNewSobb([])
     }
 
     const handleDeletePointer = (unidId: number) => {
         props.onDelete(unidId)
         setOpenDialogPointer(false)
 
+    }
+
+    const handleLocalizacao = (tipo: string) => {
+        if (tipo === 'atual') {
+            navigator.geolocation.getCurrentPosition(location => {
+                setLocalizacaoDevice({
+                    lat: location.coords.latitude,
+                    lng: location.coords.longitude
+                })
+            })
+        }
     }
 
     let color = 'info'
@@ -234,7 +273,7 @@ const MapPage = (props) => {
         <React.Fragment>
             <div className="map">
                 <LoadScript
-                    googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
+                    googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
                     libraries={["places"]}
                 >
                     <GoogleMap
@@ -417,6 +456,29 @@ const MapPage = (props) => {
                     </Divider>
                     <Box>
                         <Box
+                            display={'flex'}
+                            justifyContent={'space-between'}
+                            alignItems={'center'}
+                            m={1}
+                        >
+                            <FormControl>
+                                <FormLabel id="demo-row-radio-buttons-group-label">Localização</FormLabel>
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                    name="row-radio-buttons-group"
+                                    defaultValue={tipoLocalizacao}
+                                    onChange={(e) => {
+                                        setTipoLocalizacao(e.target.value)
+                                        handleLocalizacao(e.target.value)
+                                    }}
+                                >
+                                    <FormControlLabel value="click" control={<Radio />} label="Usar Localização do Click" />
+                                    <FormControlLabel value="atual" control={<Radio />} label="Usar Localização Atual" />
+                                </RadioGroup>
+                            </FormControl>
+                        </Box>
+                        <Box
                             m={1}
                             display={'flex'}
                             justifyContent={'space-between'}
@@ -585,6 +647,10 @@ const MapPage = (props) => {
                                     control={<Checkbox onChange={handleCheckboxChange} value="Recem-nascidos ou menores de 1 ano" />}
                                     label="Recem-nascidos ou menores de 1 ano"
                                 />
+                                <FormControlLabel
+                                    control={<Checkbox onChange={handleCheckboxChange} value="Animais" />}
+                                    label="Animais"
+                                />
                             </FormGroup>
                         </Box>
                         <Divider>
@@ -629,237 +695,6 @@ const MapPage = (props) => {
                 <DialogActions>
                     <Button startIcon={<Save/>} color={'success'} variant={'contained'} onClick={handleSaveNewPointer}>Salvar</Button>
                     <Button startIcon={<Close/>} color={'error'} variant={'contained'} onClick={() => setOpenDialogMap(false)}>Fechar</Button>
-                </DialogActions>
-            </Dialog>
-            <Dialog
-                fullWidth
-                open={openDialogEditar}
-                TransitionComponent={Transition}
-                keepMounted
-                onClose={() => setOpenDialogEditar(false)}
-                aria-describedby="alert-dialog-slide-description"
-            >
-                <DialogTitle style={{ display: 'flex', justifyContent: 'center' }}>Editar Ponto - {unid.unidade}</DialogTitle>
-                <DialogContent>
-                    <Divider>
-                        <Chip label="Informações" color="info" size="small" />
-                    </Divider>
-                    <Box>
-                        <Box
-                            m={1}
-                            display={'flex'}
-                            justifyContent={'space-between'}
-                            alignItems={'center'}
-                        >
-                            <TextField
-                                required
-                                fullWidth
-                                id="unidade"
-                                label="Unidade"
-                                name="unidade"
-                                autoComplete="unidade"
-                                defaultValue={unid.unidade}
-                                onChange={(e) => setUnid({
-                                    ...newUnidade,
-                                    unidade: e.target.value
-                                })}
-                            />
-                        </Box>
-                        <Box
-                            display={'flex'}
-                            justifyContent={'space-between'}
-                            alignItems={'center'}
-                            m={1}
-                        >
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Nível de Urgência</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={unid?.unidade}
-                                    label="Nível de Urgência"
-                                    onChange={(event: SelectChangeEvent) => setUnid({
-                                        ...newUnidade,
-                                        urgencia: event.target.value as string
-                                    })}
-                                >
-                                    <MenuItem value={'Urgente'}>Urgente</MenuItem>
-                                    <MenuItem value={'Pouco-urgente'}>Pouco-urgente</MenuItem>
-                                    <MenuItem value={'Não-urgente'}>Não-urgente</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Box>
-                        <Box
-                            m={1}
-                            display={'flex'}
-                            justifyContent={'space-between'}
-                            alignItems={'center'}
-                        >
-                            <TextField
-                                required
-                                fullWidth
-                                id="new_newncc"
-                                label="Necessidades"
-                                name="necessidades"
-                                autoComplete="necessidades"
-                                color={'warning'}
-                                defaultValue={novaNecc}
-                                onChange={(e) => setNovaNcc(e.target.value)}
-                            />
-                            <IconButton onClick={addInfoNecc}>
-                                <AddCircle sx={{ fontSize: 40, color: '#ED6C03' }}/>
-                            </IconButton>
-                        </Box>
-                        <Box
-                            m={1}
-                            display={'flex'}
-                            alignItems={'center'}
-                        >
-                            {newNecc.map((info, index) => (
-                                <Chip
-                                    label={info}
-                                    color={'warning'}
-                                    style={{ marginRight: '1vh', color: 'white' }}
-                                    deleteIcon={<Delete style={{ color: 'white' }}/>} onDelete={(e) => removerInfo(index)}
-                                />
-                            ))}
-                        </Box>
-                        <Box
-                            m={1}
-                            display={'flex'}
-                            justifyContent={'space-between'}
-                            alignItems={'center'}
-                        >
-                            <TextField
-                                required
-                                fullWidth
-                                id="new_sobb"
-                                label="Sobressalentes"
-                                name="sobressalentes"
-                                autoComplete="sobressalentes"
-                                value={novaSobb}
-                                onChange={(e) => setNovaSobb(e.target.value)}
-                            />
-                            <IconButton onClick={addInfoSobre}>
-                                <AddCircle sx={{ fontSize: 40, color: '#007320' }}/>
-                            </IconButton>
-                        </Box>
-                        <Box
-                            m={1}
-                            display={'flex'}
-                            alignItems={'center'}
-                        >
-                            {newSobb.map((info, index) => (
-                                <Chip
-                                    label={info}
-                                    style={{ marginRight: '1vh', color: 'white', backgroundColor: '#007320' }}
-                                    deleteIcon={<Delete style={{ color: 'white' }}/>} onDelete={(e) => removerInfoSobre(index)}
-                                />
-                            ))}
-                        </Box>
-                        <Divider>
-                            <Chip label="Pessoas" color="info" size="small"/>
-                        </Divider>
-                        <Box
-                            m={1}
-                            display={'flex'}
-                            justifyContent={'space-between'}
-                            alignItems={'center'}
-                        >
-                            <TextField
-                                required
-                                fullWidth
-                                id="quantidade"
-                                label="Quantidades"
-                                name="qunatidades"
-                                autoComplete="quantidades"
-                                type={'number'}
-                                defaultValue={newUnidade?.pessoas?.quantidade}
-                                onChange={(e) => setNewUnidade({
-                                    ...newUnidade,
-                                    pessoas: {
-                                        ...newUnidade.pessoas,
-                                        quantidade: parseInt(e.target.value)
-                                    }
-                                })}
-                            />
-                        </Box>
-                        <Box
-                            m={1}
-                            display={'flex'}
-                            justifyContent={'space-between'}
-                            alignItems={'center'}
-                        >
-                            <Typography variant={'body2'}>
-                                Grupo:
-                            </Typography>
-                            <FormGroup
-                                defaultValue={newUnidade?.pessoas?.grupos}
-                            >
-                                <FormControlLabel
-                                    control={<Checkbox onChange={handleCheckboxChange} value="Idosos > 60 anos" />}
-                                    label="Idosos > 60 anos"
-                                />
-                                <FormControlLabel
-                                    control={<Checkbox onChange={handleCheckboxChange} value="Adultos > 21 anos" />}
-                                    label="Adultos > 21 anos"
-                                />
-                                <FormControlLabel
-                                    control={<Checkbox onChange={handleCheckboxChange} value="Jovens > 15 anos" />}
-                                    label="Jovens > 15 anos"
-                                />
-                                <FormControlLabel
-                                    control={<Checkbox onChange={handleCheckboxChange} value="Crianças < 14 anos" />}
-                                    label="Crianças < 14 anos"
-                                />
-                                <FormControlLabel
-                                    control={<Checkbox onChange={handleCheckboxChange} value="Recem-nascidos ou menores de 1 ano" />}
-                                    label="Recem-nascidos ou menores de 1 ano"
-                                />
-                            </FormGroup>
-                        </Box>
-                        <Divider>
-                            <Chip label="Contatos" color="info" size="small" />
-                        </Divider>
-                        <Box
-                            m={1}
-                            display={'flex'}
-                            justifyContent={'space-between'}
-                            alignItems={'center'}
-                        >
-                            <TextField
-                                required
-                                fullWidth
-                                id="new_ctt"
-                                label="Contatos"
-                                name="contatos"
-                                autoComplete="contatos"
-                                color={'info'}
-                                defaultValue={novaCtt}
-                                onChange={(e) => setNovaCtt(e.target.value)}
-                            />
-                            <IconButton onClick={addInfoCtt}>
-                                <AddCircle sx={{ fontSize: 40, color: '#0079C5' }}/>
-                            </IconButton>
-                        </Box>
-                        <Box
-                            m={1}
-                            display={'flex'}
-                            alignItems={'center'}
-                        >
-                            {newCtt.map((info, index) => (
-                                <Chip
-                                    label={info}
-                                    style={{ marginRight: '1vh', color: 'white', backgroundColor: '#0079C5' }}
-                                    deleteIcon={<Delete style={{ color: 'white' }}/>} onDelete={(e) => removerInfoCtt(index)}
-                                />
-                            ))}
-                        </Box>
-                    </Box>
-                </DialogContent>
-                <DialogActions>
-                    <Button startIcon={<Save/>} color={'success'} variant={'contained'} onClick={handleEditarPointer}>Salvar</Button>
-                    <Button startIcon={<Close/>} color={'error'} variant={'contained'} onClick={() => setOpenDialogEditar(false)}>Fechar</Button>
                 </DialogActions>
             </Dialog>
             <Snackbar

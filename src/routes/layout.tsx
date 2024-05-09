@@ -7,13 +7,12 @@ import Redirect from '../components/redirect'
 
 const Layout = lazy(() => import('../containers/layout'))
 const Home = lazy(() => import('../containers/home/home'))
-const Menu1 = lazy(() => import('../containers/menu1'))
-const Menu2 = lazy(() => import('../containers/menu2'))
+const List = lazy(() => import('../containers/list'))
 
 const LayoutRouter: RouteObject[] = [
     {
         path: '/',
-        element: <Redirect to="/app/home"/>
+        element: <Redirect to="/app/map"/>
     },
     {
         path: '/app',
@@ -23,19 +22,15 @@ const LayoutRouter: RouteObject[] = [
         children: [
             {
                 path: '/app',
-                element: <Redirect to="/app/home"/>
+                element: <Redirect to="/app/map"/>
             },
             {
-                path: '/app/home',
+                path: '/app/map',
                 element: <Home/>
             },
             {
-                path: '/app/menu1',
-                element: <Menu1/>
-            },
-            {
-                path: '/app/menu2',
-                element: <Menu2/>
+                path: '/app/list',
+                element: <List/>
             }
         ]
     }

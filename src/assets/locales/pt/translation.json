@@ -24,9 +24,8 @@
     "HOME_PAGE": "Página Inicial"
   },
   "DRAWER": {
-    "HOME": "Página Inicial",
-    "MENU1": "Lista",
-    "MENU2": "Menu 2"
+    "HOME": "Página Inicial - Mapa",
+    "MENU1": "Lista"
   },
   "ESCAPE_PAGE": {
     "NOT_FOUND": {
@@ -52,10 +51,7 @@
     "HELMET": "Página Inicial"
   },
   "MENU1": {
-    "HELMET": "Menu 1"
-  },
-  "MENU2": {
-    "HELMET": "Menu 2"
+    "HELMET": "Lista"
   },
   "THEME_BUTTON": {
     "CHANGE_THEME": "Alterar tema claro/escuro"
