@@ -28,7 +28,7 @@ import {
     Skeleton
 } from '@mui/material'
 import { TransitionProps } from '@mui/material/transitions'
-import { ContentCopy, Close, Save, AddCircle, Delete, Edit } from '@mui/icons-material'
+import { ContentCopy, Close, Save, AddCircle, Delete } from '@mui/icons-material'
 import { AsyncStateStatus } from '../../store/root.types'
 
 const Transition = React.forwardRef(function Transition(
@@ -234,7 +234,7 @@ const MapPage = (props) => {
         <React.Fragment>
             <div className="map">
                 <LoadScript
-                    googleMapsApiKey={'AIzaSyDoUGU6Unbjz-f_KGEQ5E62yBjQ9uFOzXE'}
+                    googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
                     libraries={["places"]}
                 >
                     <GoogleMap

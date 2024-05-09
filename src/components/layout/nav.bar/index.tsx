@@ -17,7 +17,7 @@ import {
     Tooltip
 } from '@mui/material'
 import { createStyles, makeStyles, WithStyles, withStyles } from '@mui/styles'
-import { Dashboard, Home, Menu } from '@mui/icons-material'
+import { Dashboard, Map, Menu } from '@mui/icons-material'
 import { ThemeMode } from '../../../material.theme'
 
 import Logo from '../../../assets/imgs/logo.png'
@@ -173,7 +173,7 @@ class NavBar extends Component<IProps> {
                     </Grid>
                 </Box>
                 <List id="list_nav_bar_menu" style={{
-                    marginTop: '1vw'
+                    paddingTop: '11vh'
                 }} className={classes.list}>
 
                     <ListItemButton
@@ -182,7 +182,7 @@ class NavBar extends Component<IProps> {
                         to="/app/home"
                         onClick={closeMobileView}
                         className={classes.listItemButton}>
-                        <ListItemIcon className={classes.listItemIcon}><Home/></ListItemIcon>
+                        <ListItemIcon className={classes.listItemIcon}><Map/></ListItemIcon>
                         <ListItemText primary={t('DRAWER.HOME')}/>
                     </ListItemButton>
 
@@ -196,7 +196,7 @@ class NavBar extends Component<IProps> {
                         <ListItemText primary={t('DRAWER.MENU1')}/>
                     </ListItemButton>
 
-                    <ListItemButton
+                    {/*<ListItemButton
                         id="list_item_home"
                         component={CustomNavLink}
                         to="/app/menu2"
@@ -204,7 +204,7 @@ class NavBar extends Component<IProps> {
                         className={classes.listItemButton}>
                         <ListItemIcon className={classes.listItemIcon}><Dashboard/></ListItemIcon>
                         <ListItemText primary={t('DRAWER.MENU2')}/>
-                    </ListItemButton>
+                    </ListItemButton>*/}
 
                 </List>
             </Box>
@@ -223,9 +223,9 @@ class NavBar extends Component<IProps> {
                     sx={{ width: '95%', height: '40px' }}
                     value={value}
                     onChange={(e: any, newValue: string) => navigate(`/app/${newValue}`)}>
-                    <BottomNavigationAction value="home" icon={<Home/>}/>
+                    <BottomNavigationAction value="home" icon={<Map/>}/>
                     <BottomNavigationAction value="menu1" icon={<Menu/>}/>
-                    <BottomNavigationAction value="menu2" icon={<Dashboard/>}/>
+                    {/*<BottomNavigationAction value="menu2" icon={<Dashboard/>}/>*/}
                 </BottomNavigation>
             </Box>
 
