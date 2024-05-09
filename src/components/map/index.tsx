@@ -24,11 +24,12 @@ import {
     IconButton,
     FormGroup,
     FormControlLabel,
-    Checkbox
+    Checkbox,
+    Skeleton
 } from '@mui/material'
 import { TransitionProps } from '@mui/material/transitions'
-import { Unidades } from '../../assets/data/data'
 import { ContentCopy, Close, Save, AddCircle, Delete } from '@mui/icons-material'
+import { AsyncStateStatus } from '../../store/root.types'
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
@@ -42,8 +43,9 @@ const Transition = React.forwardRef(function Transition(
 interface IUnidade {
     id: number,
     urgencia: string,
+    unidade: string,
     necessidades: Array<string>,
-    sobressalente: Array<string>
+    sobressalentes: Array<string>
     pessoas: {
         quantidade: number,
         grupos: Array<string>
@@ -55,18 +57,18 @@ interface IUnidade {
     }
 }
 
-const MapPage = () => {
+const MapPage = (props) => {
     // eslint-disable-next-line no-undef
     const [map, setMap] = React.useState<google.maps.Map>()
     const [openDialogPointer, setOpenDialogPointer] = React.useState(false)
     const [openDialogMap, setOpenDialogMap] = React.useState(false)
     const [openSnackBar, setOpenSnackBar] = React.useState(false)
-    const [unidade, setUnidade] = React.useState<number>()
     const [newUnidade, setNewUnidade] = React.useState<IUnidade>({
         id: 0,
         urgencia: '',
+        unidade: '',
         necessidades: [],
-        sobressalente: [],
+        sobressalentes: [],
         pessoas: {
             quantidade: 0,
             grupos: []
@@ -83,6 +85,22 @@ const MapPage = () => {
     const [novaSobb, setNovaSobb] = React.useState<string>('')
     const [newCtt, setNewCtt] = React.useState<any>([])
     const [novaCtt, setNovaCtt] = React.useState<string>('')
+    const [unid, setUnid] = React.useState<IUnidade>({
+            id: 0,
+            urgencia: '',
+            unidade: '',
+            necessidades: [],
+            sobressalentes: [],
+            pessoas: {
+                quantidade: 0,
+                grupos: []
+            },
+            contatos: [],
+            localizacao: {
+                lat: 0,
+                lng: 0
+            }
+        })
 
     const position = {
         lat: -29.207932557235694,
@@ -94,9 +112,10 @@ const MapPage = () => {
     };
     // eslint-disable-next-line no-undef
     const onClickPointer = (e: google.maps.MapMouseEvent, unidId: number) => {
+        props.onGetOne(unidId)
         setOpenDialogPointer(true)
-        setUnidade(unidId)
     };
+
 
     // eslint-disable-next-line no-undef
     const onClickMap = (e: google.maps.MapMouseEvent) => {
@@ -137,7 +156,7 @@ const MapPage = () => {
             setNewSobb([...newSobb, novaSobb])
             setNewUnidade({
                 ...newUnidade,
-                sobressalente: [...newUnidade.sobressalente, novaSobb]
+                sobressalentes: [...newUnidade.sobressalentes, novaSobb]
             })
             setNovaSobb('')
         }
@@ -188,11 +207,9 @@ const MapPage = () => {
     }
 
     const handleSaveNewPointer = () => {
-        console.log(newUnidade)
+        props.onCreate(newUnidade)
         setOpenDialogMap(false)
     }
-
-    const unid = Unidades.find((item) => item.id === unidade)
 
     let color = 'info'
 
@@ -215,7 +232,7 @@ const MapPage = () => {
                         zoom={7}
                         onClick={(e) => onClickMap(e)}
                     >
-                        {Unidades.map((pointer) => (
+                        {props.poiters.map((pointer) => (
                             <Marker
                                 cursor={'pointer'}
                                 key={pointer.id}
@@ -234,124 +251,139 @@ const MapPage = () => {
                 onClose={() => setOpenDialogPointer(false)}
                 aria-describedby="alert-dialog-slide-description"
             >
-                <DialogTitle style={{ display: 'flex', justifyContent: 'center' }}>{unid?.unidade}</DialogTitle>
-                <DialogContent>
-                    <Divider>
-                        <Chip label="Informações" color="info" size="small" />
-                    </Divider>
-                    <Box>
-                        <Box
-                            display={'flex'}
-                            justifyContent={'space-between'}
-                            alignItems={'center'}
-                        >
-                            <Typography variant={'body2'}>
-                                Urgência:
-                            </Typography>
-                            {/* @ts-ignore */}
-                            <Chip color={color} label={`${unid?.urgencia}`} />
-                        </Box>
-                        <Box
-                            mt={1}
-                            display={'flex'}
-                            justifyContent={'space-between'}
-                            alignItems={'center'}
-                        >
-                            <Typography variant={'body2'}>
-                                Necessidades:
-                            </Typography>
-                            <Box
-                                display={'flex'}
-                                flexDirection={'column'}
-                            >
-                                {
-                                    unid?.necessidades.map((ness) => (
-                                        <Chip style={{ marginBottom: '1vh', backgroundColor: '#FCDB00' }} label={ness} />
-                                    ))
-                                }
-                            </Box>
-                        </Box>
-                        <Box
-                            mt={1}
-                            display={'flex'}
-                            justifyContent={'space-between'}
-                            alignItems={'center'}
-                        >
-                            <Typography variant={'body2'}>
-                                Sobressalente:
-                            </Typography>
-                            <Box
-                                display={'flex'}
-                                flexDirection={'column'}
-                            >
-                                {
-                                    unid?.sobressalente.map((sobre) => (
-                                        <Chip style={{ marginBottom: '1vh', backgroundColor: '#007320', color: 'white' }} label={sobre} />
-                                    ))
-                                }
-                            </Box>
-                        </Box>
-                        <Divider>
-                            <Chip label="Pessoas" color="info" size="small" />
-                        </Divider>
-                        <Box
-                            display={'flex'}
-                            justifyContent={'space-between'}
-                            alignItems={'center'}
-                        >
-                            <Typography variant={'body2'}>
-                                Quantidade:
-                            </Typography>
-                            {/* @ts-ignore */}
-                            <Chip color={'success'} label={`${unid?.pessoas.quantidade}`} />
-                        </Box>
-                        <Box
-                            mt={1}
-                            display={'flex'}
-                            justifyContent={'space-between'}
-                            alignItems={'center'}
-                        >
-                            <Typography variant={'body2'}>
-                                Grupo:
-                            </Typography>
-                            <Box
-                                display={'flex'}
-                                flexDirection={'column'}
-                            >
-                                {
-                                    unid?.pessoas.grupos.map((grup) => (
-                                        <Chip style={{ marginBottom: '1vh', backgroundColor: '#FCDB00' }} label={grup} />
-                                    ))
-                                }
-                            </Box>
-                        </Box>
-                        <Divider>
-                            <Chip label="Contatos" color="info" size="small" />
-                        </Divider>
-                        <Box
-                            mt={1}
-                            display={'flex'}
-                            justifyContent={'center'}
-                            alignItems={'center'}
-                        >
-                            <Box
-                                display={'flex'}
-                                flexDirection={'row'}
-                                justifyContent={'space-around'}
+                {
+                    props.statusOne === AsyncStateStatus.LOADING ?
+                        <>
+                            <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
+                            <Skeleton variant="circular" width={40} height={40} />
+                            <Skeleton variant="rectangular" width={210} height={60} />
+                            <Skeleton variant="rounded" width={210} height={60} />
+                        </>
+                        :
+                        <>
+                            <DialogTitle style={{ display: 'flex', justifyContent: 'center' }}>{props.dataOne?.unidade}</DialogTitle>
+                            <DialogContent>
+                                <Divider>
+                                    <Chip label="Informações" color="info" size="small" />
+                                </Divider>
+                                <Box>
+                                    <Box
+                                        display={'flex'}
+                                        justifyContent={'space-between'}
+                                        alignItems={'center'}
+                                    >
+                                        <Typography variant={'body2'}>
+                                            Urgência:
+                                        </Typography>
+                                        {/* @ts-ignore */}
+                                        <Chip color={color} label={`${props.dataOne?.urgencia}`} />
+                                    </Box>
+                                    <Divider style={{ marginTop: '1vh' }}/>
+                                    <Box
+                                        mt={1}
+                                        display={'flex'}
+                                        justifyContent={'space-between'}
+                                        alignItems={'center'}
+                                    >
+                                        <Typography variant={'body2'}>
+                                            Necessidades:
+                                        </Typography>
+                                        <Box
+                                            display={'flex'}
+                                            flexDirection={'column'}
+                                        >
+                                            {
+                                                props.dataOne?.necessidades?.map((ness) => (
+                                                    <Chip style={{ marginBottom: '1vh', backgroundColor: '#FCDB00' }} label={ness} />
+                                                ))
+                                            }
+                                        </Box>
+                                    </Box>
+                                    <Divider style={{ marginTop: '1vh' }}/>
+                                    <Box
+                                        mt={1}
+                                        display={'flex'}
+                                        justifyContent={'space-between'}
+                                        alignItems={'center'}
+                                    >
+                                        <Typography variant={'body2'}>
+                                            Sobressalente:
+                                        </Typography>
+                                        <Box
+                                            display={'flex'}
+                                            flexDirection={'column'}
+                                        >
+                                            {
+                                                props.dataOne?.sobressalentes?.map((sobre) => (
+                                                    <Chip style={{ marginBottom: '1vh', backgroundColor: '#007320', color: 'white' }} label={sobre} />
+                                                ))
+                                            }
+                                        </Box>
+                                    </Box>
+                                    <Divider>
+                                        <Chip label="Pessoas" color="info" size="small" />
+                                    </Divider>
+                                    <Box
+                                        display={'flex'}
+                                        justifyContent={'space-between'}
+                                        alignItems={'center'}
+                                    >
+                                        <Typography variant={'body2'}>
+                                            Quantidade:
+                                        </Typography>
+                                        {/* @ts-ignore */}
+                                        <Chip color={'success'} label={`${props.dataOne?.pessoas?.quantidade}`} />
+                                    </Box>
+                                    <Divider style={{ marginTop: '1vh' }}/>
+                                    <Box
+                                        mt={1}
+                                        display={'flex'}
+                                        justifyContent={'space-between'}
+                                        alignItems={'center'}
+                                    >
+                                        <Typography variant={'body2'}>
+                                            Grupo:
+                                        </Typography>
+                                        <Box
+                                            display={'flex'}
+                                            flexDirection={'column'}
+                                        >
+                                            {
+                                                props.dataOne?.pessoas?.grupos.map((grup) => (
+                                                    <Chip style={{ marginBottom: '1vh', backgroundColor: '#FCDB00' }} label={grup} />
+                                                ))
+                                            }
+                                        </Box>
+                                    </Box>
+                                    <Divider>
+                                        <Chip label="Contatos" color="info" size="small" />
+                                    </Divider>
+                                    <Box
+                                        mt={1}
+                                        display={'flex'}
+                                        justifyContent={'center'}
+                                        alignItems={'center'}
+                                    >
+                                        <Box
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            justifyContent={'space-around'}
 
-                            >
-                                {
-                                    unid?.contatos.map((contato) => (
-                                        <Chip deleteIcon={<ContentCopy/>} onDelete={() => onCopyToClikBoard(contato)} style={{ marginRight: '1vh', backgroundColor: '#FCDB00' }} label={contato} />
-                                    ))
-                                }
-                            </Box>
-                        </Box>
-                    </Box>
-                </DialogContent>
-                <DialogActions>
-                    <Button startIcon={<Close/>} color={'error'} variant={'contained'} onClick={() => setOpenDialogPointer(false)}>Fechar</Button>
-                </DialogActions>
+                                        >
+                                            {
+                                                props.dataOne?.contatos?.map((contato) => (
+                                                    <Chip deleteIcon={<ContentCopy/>} onDelete={() => onCopyToClikBoard(contato)} style={{ marginRight: '1vh', backgroundColor: '#FCDB00' }} label={contato} />
+                                                ))
+                                            }
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button startIcon={<Close/>} color={'error'} variant={'contained'} onClick={() => setOpenDialogPointer(false)}>Fechar</Button>
+                            </DialogActions>
+                        </>
+                }
             </Dialog>
             <Dialog
                 fullWidth
@@ -361,12 +393,32 @@ const MapPage = () => {
                 onClose={() => setOpenDialogMap(false)}
                 aria-describedby="alert-dialog-slide-description"
             >
-                <DialogTitle style={{ display: 'flex', justifyContent: 'center' }}>{unid?.unidade}</DialogTitle>
+                <DialogTitle style={{ display: 'flex', justifyContent: 'center' }}>Adicionar Novo Ponto de SOS</DialogTitle>
                 <DialogContent>
                     <Divider>
                         <Chip label="Informações" color="info" size="small" />
                     </Divider>
                     <Box>
+                        <Box
+                            m={1}
+                            display={'flex'}
+                            justifyContent={'space-between'}
+                            alignItems={'center'}
+                        >
+                            <TextField
+                                required
+                                fullWidth
+                                id="unidade"
+                                label="Unidade"
+                                name="unidade"
+                                autoComplete="unidade"
+                                value={newUnidade.unidade}
+                                onChange={(e) => setNewUnidade({
+                                    ...newUnidade,
+                                    unidade: e.target.value
+                                })}
+                            />
+                        </Box>
                         <Box
                             display={'flex'}
                             justifyContent={'space-between'}

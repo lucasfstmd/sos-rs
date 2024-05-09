@@ -1,5 +1,6 @@
 import { all, fork } from 'redux-saga/effects'
 import authSaga from './auth/sagas'
+import sosSaga from './sos/sagas'
 
 /**
  * <h5>The root sagas is a combination of all the functionality sagas.</p>
@@ -22,7 +23,8 @@ import authSaga from './auth/sagas'
  */
 const rootSaga = function* () {
     yield all([
-        fork(authSaga)
+        fork(authSaga),
+        fork(sosSaga)
     ])
 }
 

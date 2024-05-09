@@ -16,7 +16,7 @@ class Axios {
     public static getInstance(): AxiosInstance {
         if (!this._instance) {
             this._instance = axios.create({
-                baseURL: process.env.REACT_APP_API_GATEWAY,
+                baseURL: 'http://localhost:8080/',
                 httpsAgent: new Agent({ rejectUnauthorized: false })
             })
         }
