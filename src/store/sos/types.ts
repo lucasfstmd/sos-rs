@@ -20,7 +20,7 @@ interface ISosCreate {
 
 export interface ISosAction {
     payload?: Sos
-    id?: number
+    id?: string
 }
 
 export interface ISosState {

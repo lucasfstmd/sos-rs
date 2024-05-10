@@ -31,7 +31,7 @@ export function* getOne(action: PayloadAction<ISosAction>) {
     const { sosOneSuccess, sosOneFailure } = SosActions
     try {
         const { id } = action.payload
-        const sos: any = yield apply(sosService, sosService.getOne, [id as number])
+        const sos: any = yield apply(sosService, sosService.getOne, [id as string])
         yield put(sosOneSuccess({ data: sos }))
     } catch (err) {
         yield put(sosOneFailure)
@@ -42,7 +42,7 @@ export function* deleted(action: PayloadAction<ISosAction>) {
     const { sosDeleteSuccess, sosCreateFailure, sosRequest } = SosActions
     try {
         const { id } = action.payload
-        const sos: any = yield apply(sosService, sosService.delete, [id as number])
+        const sos: any = yield apply(sosService, sosService.delete, [id as string])
         yield put(sosDeleteSuccess({ data: sos }))
         yield put(sosRequest())
     } catch (err) {

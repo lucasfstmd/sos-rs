@@ -17,7 +17,7 @@ import {
     Tooltip
 } from '@mui/material'
 import { createStyles, makeStyles, WithStyles, withStyles } from '@mui/styles'
-import { Dashboard, Map, Menu } from '@mui/icons-material'
+import { Map, Menu } from '@mui/icons-material'
 import { ThemeMode } from '../../../material.theme'
 
 import Logo from '../../../assets/imgs/logo.png'
@@ -64,7 +64,8 @@ const NavBarStyle = (theme: Theme) => createStyles({
         alignItems: 'center',
         width: 220,
         height: 145,
-        marginLeft: theme.spacing(5)
+        marginLeft: theme.spacing(5),
+        marginBottom: '5vh'
     },
     drawerPaper: {
         width: DRAWER_WIDTH,
@@ -163,7 +164,7 @@ class NavBar extends Component<IProps> {
                                 <Link id="link_to_home_page" to="/" onClick={closeMobileView}>
                                     <img
                                         style={{
-                                            width: '80%'
+                                            width: '65%'
                                     }}
                                         src={Logo}
                                         alt="Logo"/>
@@ -172,14 +173,12 @@ class NavBar extends Component<IProps> {
                         </Tooltip>
                     </Grid>
                 </Box>
-                <List id="list_nav_bar_menu" style={{
-                    paddingTop: '11vh'
-                }} className={classes.list}>
+                <List id="list_nav_bar_menu" className={classes.list}>
 
                     <ListItemButton
                         id="list_item_home"
                         component={CustomNavLink}
-                        to="/app/home"
+                        to="/app/map"
                         onClick={closeMobileView}
                         className={classes.listItemButton}>
                         <ListItemIcon className={classes.listItemIcon}><Map/></ListItemIcon>
@@ -189,22 +188,12 @@ class NavBar extends Component<IProps> {
                     <ListItemButton
                         id="list_item_home"
                         component={CustomNavLink}
-                        to="/app/menu1"
+                        to="/app/list"
                         onClick={closeMobileView}
                         className={classes.listItemButton}>
                         <ListItemIcon className={classes.listItemIcon}><Menu/></ListItemIcon>
                         <ListItemText primary={t('DRAWER.MENU1')}/>
                     </ListItemButton>
-
-                    {/*<ListItemButton
-                        id="list_item_home"
-                        component={CustomNavLink}
-                        to="/app/menu2"
-                        onClick={closeMobileView}
-                        className={classes.listItemButton}>
-                        <ListItemIcon className={classes.listItemIcon}><Dashboard/></ListItemIcon>
-                        <ListItemText primary={t('DRAWER.MENU2')}/>
-                    </ListItemButton>*/}
 
                 </List>
             </Box>
@@ -223,8 +212,8 @@ class NavBar extends Component<IProps> {
                     sx={{ width: '95%', height: '40px' }}
                     value={value}
                     onChange={(e: any, newValue: string) => navigate(`/app/${newValue}`)}>
-                    <BottomNavigationAction value="home" icon={<Map/>}/>
-                    <BottomNavigationAction value="menu1" icon={<Menu/>}/>
+                    <BottomNavigationAction value="map" icon={<Map/>}/>
+                    <BottomNavigationAction value="list" icon={<Menu/>}/>
                     {/*<BottomNavigationAction value="menu2" icon={<Dashboard/>}/>*/}
                 </BottomNavigation>
             </Box>

@@ -16,12 +16,12 @@ export class SosService {
             .then((response: AxiosResponse) => response.data.map((item: Sos) => new Sos().fromJSON(item)))
     }
 
-    public async getOne(id: number): Promise<Sos> {
+    public async getOne(id: string): Promise<Sos> {
         return axiosInstance.get(`${this.apiVersion}/sos/${id}`)
             .then((response: AxiosResponse) => new Sos().fromJSON(response.data))
     }
 
-    public async delete(id: number): Promise<Sos> {
+    public async delete(id: string): Promise<Sos> {
         return axiosInstance.delete(`${this.apiVersion}/sos/${id}`)
             .then((response: AxiosResponse) => new Sos().fromJSON(response.data))
     }
