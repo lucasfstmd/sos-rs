@@ -164,7 +164,7 @@ class ListComponent extends Component<IJoinProps, IState> {
                                                 </Box>
                                             </TableCell>
                                             <TableCell align="center">
-                                                <Link to={`/app/map?marker=${row.id}`}>
+                                                <Link to={`/app/map?marker=${row.id}&centerLat=${row.localizacao.lat}&centerLng=${row.localizacao.lng}&zoom=${15}`}>
                                                     Ir para localização
                                                 </Link>
                                             </TableCell>

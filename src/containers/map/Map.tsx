@@ -40,9 +40,15 @@ import { SosActions } from '../../store/sos'
 import { connect } from 'react-redux'
 import { IComponentRouter, withRouter } from '../../components/with.router'
 
+const mobileView = matchMedia('(min-width: 768px)')
+
 const Style = (theme: Theme) => createStyles({
     map: {
-        height: '98vh'
+        height: mobileView.matches ? '85vh' : '75vh',
+        width: '85vw',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     mapMarker: {
         marginTop: '-30px'
@@ -91,7 +97,11 @@ interface IState {
     readonly openSnackBar: boolean
     readonly newSos: ISos
     readonly newNecc: Array<any>
-    readonly infoNcc: string
+    readonly infoNcc: {
+        readonly necessidade: string,
+        readonly quantidade: number,
+        readonly unidade: string
+    }
     readonly newSubb: Array<any>
     readonly infoSubb: string
     readonly newCtt: Array<any>
@@ -105,6 +115,11 @@ interface IState {
         readonly lat: number | undefined,
         readonly lng: number | undefined
     }
+    readonly center: {
+        readonly lat: number,
+        readonly lng: number
+    }
+    readonly zoom: number
 }
 
 type IJoinProps = IProps & WithStyles<typeof Style> & WithTranslation & IComponentRouter
@@ -144,7 +159,11 @@ class MapComponent extends Component<IJoinProps, IState> {
                 }
             },
             newNecc: [],
-            infoNcc: '',
+            infoNcc: {
+                necessidade: '',
+                quantidade: 0,
+                unidade: ''
+            },
             newSubb: [],
             infoSubb: '',
             newCtt: [],
@@ -158,6 +177,11 @@ class MapComponent extends Component<IJoinProps, IState> {
                 lat: 0,
                 lng: 0
             },
+            center: {
+                lat: -29.207932557235694,
+                lng: -53.24161023768301,
+            },
+            zoom: 7
         }
 
         this.addInfoCtt = this.addInfoCtt.bind(this)
@@ -183,11 +207,21 @@ class MapComponent extends Component<IJoinProps, IState> {
         document.title = `${t('HOME.HELMET')}`
         const query = new URLSearchParams(window.location.search)
         const markerId = query.get('marker')
+        const centerLat = query.get('centerLat')
+        const centerLng = query.get('centerLng')
+        const zoom = query.get('zoom')
         if (markerId) {
             this.props.sosOneRequest({ id: markerId })
-            this.setState({
-                openDialogPointer: true
-            })
+            if (centerLat && centerLng && zoom) {
+                this.setState({
+                    center: {
+                        lat: parseFloat(centerLat),
+                        lng: parseFloat(centerLng)
+                    },
+                    zoom: parseInt(zoom),
+                    openDialogPointer: true
+                })
+            }
         }
     }
 
@@ -209,13 +243,11 @@ class MapComponent extends Component<IJoinProps, IState> {
             infoCtt,
             infoNcc,
             infoSubb,
-            openSnackBar
+            openSnackBar,
+            center,
+            zoom
         } = this.state
 
-        const position = {
-            lat: -29.207932557235694,
-            lng: -53.24161023768301,
-        }
         // eslint-disable-next-line no-undef
         const onMapLoad = (map: google.maps.Map) => {
             this.setState({ map: map })
@@ -236,9 +268,9 @@ class MapComponent extends Component<IJoinProps, IState> {
                     >
                         <GoogleMap
                             onLoad={onMapLoad}
-                            mapContainerStyle={{ width: "95%", height: "90%" }}
-                            center={position}
-                            zoom={7}
+                            mapContainerStyle={{ width: "100%", height: "100%" }}
+                            center={center}
+                            zoom={zoom}
                             onClick={(e) => this.onClickMap(e)}
                         >
                             {dataRequest.map((pointer) => (
@@ -390,6 +422,7 @@ class MapComponent extends Component<IJoinProps, IState> {
                 </Dialog>
                 <Dialog
                     fullWidth
+                    fullScreen={mobileView.matches ? false : true}
                     open={openDialogMap}
                     TransitionComponent={Transition}
                     keepMounted
@@ -478,20 +511,58 @@ class MapComponent extends Component<IJoinProps, IState> {
                                 display={'flex'}
                                 justifyContent={'space-between'}
                                 alignItems={'center'}
+                                flexDirection={mobileView.matches ? 'row' : 'column'}
                             >
-                                <TextField
-                                    required
-                                    fullWidth
-                                    id="new_newncc"
-                                    label="Necessidades"
-                                    name="necessidades"
-                                    autoComplete="necessidades"
-                                    color={'warning'}
-                                    value={infoNcc}
-                                    onChange={(e) => this.setState({
-                                        infoNcc: e.target.value
-                                    })}
-                                />
+                                <Box
+                                    display={'flex'}
+
+                                >
+                                    <TextField
+                                        id="new_newncc"
+                                        label="Necessidades"
+                                        name="necessidades"
+                                        autoComplete="necessidades"
+                                        color={'warning'}
+                                        value={infoNcc.necessidade}
+                                        onChange={(e) => this.setState({
+                                            infoNcc: {
+                                                ...infoNcc,
+                                                necessidade: e.target.value
+                                            }
+                                        })}
+                                        style={{ flexGrow: 1, marginRight: '8px' }}
+                                    />
+                                    <TextField
+                                        id="new_newncc"
+                                        label="Quantidade"
+                                        name="necessidades"
+                                        autoComplete="necessidades"
+                                        color={'warning'}
+                                        value={infoNcc.quantidade}
+                                        onChange={(e) => this.setState({
+                                            infoNcc: {
+                                                ...infoNcc,
+                                                quantidade: parseFloat(e.target.value)
+                                            }
+                                        })}
+                                        style={{ flexGrow: 1, marginRight: '8px' }}
+                                    />
+                                    <TextField
+                                        id="new_newncc"
+                                        label="Unidade"
+                                        name="necessidades"
+                                        autoComplete="necessidades"
+                                        color={'warning'}
+                                        value={infoNcc.unidade}
+                                        onChange={(e) => this.setState({
+                                            infoNcc: {
+                                                ...infoNcc,
+                                                unidade: e.target.value
+                                            }
+                                        })}
+                                        style={{ flexGrow: 1 }}
+                                    />
+                                </Box>
                                 <IconButton onClick={this.addInfoNecc}>
                                     <AddCircle sx={{ fontSize: 40, color: '#ED6C03' }} />
                                 </IconButton>
@@ -700,18 +771,28 @@ class MapComponent extends Component<IJoinProps, IState> {
             infoNcc,
             newNecc,
             newSos
-        } = this.state
-        if (infoNcc.trim() !== '') {
+        } = this.state;
+    
+        const { necessidade, quantidade, unidade } = infoNcc
+    
+        if (necessidade.trim() !== '' && quantidade && unidade) {
+            const novaNecessidade = `${necessidade} - ${quantidade} ${unidade}`
+            
             this.setState({
-                newNecc: [...newNecc, infoNcc],
+                newNecc: [...newNecc, novaNecessidade],
                 newSos: {
                     ...newSos,
-                    necessidades: [...newSos.necessidades, infoNcc]
+                    necessidades: [...newSos.necessidades, novaNecessidade]
                 },
-                infoNcc: ''
-            })
+                infoNcc: {
+                    necessidade: '',
+                    quantidade: 0,
+                    unidade: ''
+                }
+            });
         }
     }
+    
 
     private removeInfoNcc(index: number) {
         const newInfos = [this.state.newNecc]
@@ -806,10 +887,12 @@ class MapComponent extends Component<IJoinProps, IState> {
         }
         if (this.state.locationType === 'click') loc = this.state.locationClick
         if (this.state.locationType === 'atual') loc = this.state.locationDevice
-        this.props.sosCreateRequest({ payload: new Sos().fromJSON({
-            ...this.state.newSos,
-            localizacao: loc
-        })})
+        this.props.sosCreateRequest({
+            payload: new Sos().fromJSON({
+                ...this.state.newSos,
+                localizacao: loc
+            })
+        })
         this.setState({
             newSos: {
                 id: '',
