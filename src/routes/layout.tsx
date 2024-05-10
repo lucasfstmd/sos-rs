@@ -6,7 +6,7 @@ import ProtectRouter from '../components/protect.router'
 import Redirect from '../components/redirect'
 
 const Layout = lazy(() => import('../containers/layout'))
-const Home = lazy(() => import('../containers/home/home'))
+const Home = lazy(() => import('../containers/map/Map'))
 const List = lazy(() => import('../containers/list'))
 
 const LayoutRouter: RouteObject[] = [
